@@ -4,302 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Agriculture App</title>
-<style>
-  :root{
-    --green-dark:#1B5E20;
-    --green:#2E7D32;
-    --green-mid:#43965B;
-    --green-light:#E8F5E9;
-    --cream:#F7F5EE;
-    --wheat:#D9A441;
-    --wheat-light:#FBF0DC;
-    --sky:#EAF4FC;
-    --sky-mid:#CFE8FA;
-    --ink:#1F2A1F;
-    --ink-soft:#5B6B5B;
-    --line:#E4E4DC;
-    --red:#C1443B;
-    --purple:#7A5FA6;
-    --white:#ffffff;
-    --shadow: 0 10px 30px rgba(27,94,32,0.12);
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif;
-    background: radial-gradient(circle at 20% 10%, #eef7ec 0%, #dfeee0 45%, #cfe3d2 100%);
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:24px;
-    color:var(--ink);
-  }
-  .phone{
-    width:390px;
-    max-width:100%;
-    height:820px;
-    background:var(--cream);
-    border-radius:40px;
-    box-shadow: var(--shadow), 0 0 0 10px #16321a, 0 0 0 12px #0e2211;
-    overflow:hidden;
-    position:relative;
-    display:flex;
-    flex-direction:column;
-  }
-  .statusbar{
-    height:34px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 22px;
-    font-size:13px;
-    font-weight:700;
-    color:var(--ink);
-    flex-shrink:0;
-    z-index:5;
-  }
-  .statusbar .icons{display:flex; gap:5px; align-items:center;}
-  .screen{
-    flex:1;
-    display:none;
-    flex-direction:column;
-    overflow-y:auto;
-    -ms-overflow-style:none;
-    scrollbar-width:none;
-    animation:fadeIn .25s ease;
-  }
-  .screen::-webkit-scrollbar{display:none;}
-  .screen.active{display:flex;}
-  @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
-
-  /* ---------- Top bars ---------- */
-  .topbar{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:6px 20px 14px;
-    flex-shrink:0;
-  }
-  .topbar h1{font-size:18px; margin:0; font-weight:700; flex:1;}
-  .iconbtn{
-    width:34px;height:34px;border-radius:12px;
-    display:flex;align-items:center;justify-content:center;
-    background:var(--white); border:1px solid var(--line);
-    cursor:pointer; color:var(--ink); flex-shrink:0;
-  }
-  .iconbtn:hover{background:var(--green-light);}
-
-  /* ---------- Splash ---------- */
-  #screen-splash{
-    background: linear-gradient(180deg,#EAF6EC 0%, #DDEFDF 60%, #CFE6D2 100%);
-    align-items:center;
-    justify-content:space-between;
-    text-align:center;
-    padding:60px 30px 40px;
-  }
-  .splash-logo{
-    width:150px;height:150px;border-radius:50%;
-    background:radial-gradient(circle at 35% 30%, #fff, #EFF7E9 60%, #E3F0DC 100%);
-    display:flex;align-items:center;justify-content:center;
-    box-shadow:0 10px 25px rgba(46,125,50,0.18);
-    font-size:64px;
-    margin-bottom:26px;
-  }
-  .splash-title{font-size:28px; font-weight:800; color:var(--green-dark); line-height:1.25; margin:0 0 8px;}
-  .splash-dots{display:flex; gap:6px; margin-top:14px;}
-  .splash-dots span{width:7px;height:7px;border-radius:50%; background:#B9CDB4;}
-  .splash-dots span.on{background:var(--green);}
-  .splash-illustration{
-    width:100%; flex:1; margin-top:30px; border-radius:24px;
-    background: linear-gradient(180deg, #cfe8bd 0%, #a9d18d 55%, #8ec46f 100%);
-    position:relative; overflow:hidden; min-height:180px;
-  }
-  .splash-illustration .rows{position:absolute; inset:0; opacity:.35;
-    background-image: repeating-linear-gradient(100deg, transparent 0 18px, rgba(255,255,255,.5) 18px 20px);}
-  .splash-illustration .emoji{position:absolute; bottom:14px; left:50%; transform:translateX(-50%); font-size:54px;}
-  .btn-primary{
-    width:100%; padding:15px; border:none; border-radius:14px;
-    background:linear-gradient(180deg,var(--green-mid),var(--green-dark));
-    color:#fff; font-size:15px; font-weight:700; cursor:pointer;
-    box-shadow:0 8px 18px rgba(27,94,32,0.25);
-  }
-  .btn-primary:active{transform:translateY(1px);}
-  .btn-outline{
-    width:100%; padding:14px; border-radius:14px; background:#fff;
-    border:1.5px solid var(--green); color:var(--green-dark); font-weight:700; font-size:15px; cursor:pointer;
-  }
-
-  /* ---------- Login ---------- */
-  #screen-login{ padding:34px 26px; background:linear-gradient(180deg,#EFF8EE, #F7F5EE 40%);}
-  .leaf-deco{position:absolute; top:20px; right:20px; font-size:34px; opacity:.5;}
-  .login-title{font-size:26px; font-weight:800; color:var(--green-dark); text-align:center; margin:10px 0 4px;}
-  .login-sub{text-align:center; color:var(--ink-soft); font-size:13px; margin-bottom:26px;}
-  .field{
-    display:flex; align-items:center; gap:10px;
-    background:#fff; border:1.5px solid var(--line); border-radius:14px;
-    padding:14px 16px; margin-bottom:14px; font-size:14px;
-  }
-  .field input{border:none; outline:none; flex:1; font-size:14px; background:transparent;}
-  .field .ic{opacity:.6;}
-  .forgot{ text-align:right; font-size:12px; color:var(--green); margin:-4px 0 20px; cursor:pointer; font-weight:600;}
-  .or-row{display:flex; align-items:center; gap:10px; margin:20px 0; color:var(--ink-soft); font-size:12px;}
-  .or-row::before,.or-row::after{content:""; flex:1; height:1px; background:var(--line);}
-  .field-error{border-color:var(--red) !important;}
-  .error-text{color:var(--red); font-size:11.5px; margin:-8px 0 12px 4px;}
-
-  /* ---------- Sign up ---------- */
-  #screen-signup{ padding:34px 26px; background:linear-gradient(180deg,#EFF8EE, #F7F5EE 40%); position:relative;}
-  .signup-back{position:absolute; top:20px; left:20px;}
-  .password-hint{color:var(--ink-soft); font-size:11.5px; margin:-8px 0 14px 4px;}
-  .terms-text{text-align:center; color:var(--ink-soft); font-size:11.5px; margin-top:16px; line-height:1.5;}
-  .terms-text b{color:var(--green-dark); font-weight:700;}
-  .login-link-row{text-align:center; font-size:13px; color:var(--ink-soft); margin-top:18px;}
-  .login-link-row b{color:var(--green); cursor:pointer;}
-
-  /* ---------- Home dashboard ---------- */
-  #screen-home{background:var(--cream);}
-  .hello-card{
-    margin:0 20px 16px; padding:20px; border-radius:20px;
-    background:linear-gradient(135deg,#F4A24A, #E8822F);
-    color:#fff; position:relative; overflow:hidden;
-  }
-  .hello-card h2{margin:0 0 4px; font-size:20px;}
-  .hello-card p{margin:0; font-size:13px; opacity:.95;}
-  .hello-card .farmer-emoji{position:absolute; right:14px; bottom:-6px; font-size:70px; opacity:.9;}
-  .section-label{padding:0 20px; font-size:15px; font-weight:700; margin:6px 0 12px;}
-  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px; padding:0 20px;}
-  .tile{
-    background:#fff; border-radius:18px; padding:18px 16px; cursor:pointer;
-    border:1px solid var(--line); display:flex; flex-direction:column; gap:10px;
-    transition:transform .12s ease;
-  }
-  .tile:active{transform:scale(.97);}
-  .tile .tile-ic{width:42px;height:42px;border-radius:12px; display:flex;align-items:center;justify-content:center; font-size:20px;}
-  .tile b{font-size:14px;}
-  .tile.weather .tile-ic{background:var(--sky-mid);}
-  .tile.crops .tile-ic{background:var(--green-light);}
-  .tile.market .tile-ic{background:#FDEBD0;}
-  .tile.schemes .tile-ic{background:#EEE6F7;}
-  .tile.profile .tile-ic{background:#DDF0E4;}
-  .tile.help .tile-ic{background:#FBE1DE;}
-
-  /* ---------- Bottom nav ---------- */
-  .bottomnav{
-    display:flex; border-top:1px solid var(--line); background:#fff;
-    padding:8px 6px 12px; flex-shrink:0;
-  }
-  .navitem{
-    flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
-    font-size:10.5px; color:var(--ink-soft); cursor:pointer; font-weight:600;
-  }
-  .navitem .navic{font-size:18px;}
-  .navitem.active{color:var(--green-dark);}
-
-  /* ---------- Weather ---------- */
-  #screen-weather{background:linear-gradient(180deg,#DCEEFB,#F7F5EE 40%);}
-  .loc-row{display:flex; align-items:center; gap:6px; padding:0 20px; color:var(--ink-soft); font-size:13px; margin-bottom:2px;}
-  .loc-date{padding:0 20px; color:var(--ink-soft); font-size:12px; margin-bottom:14px;}
-  .weather-main{
-    margin:0 20px 16px; background:#fff; border-radius:22px; padding:20px;
-    display:flex; align-items:center; justify-content:space-between;
-  }
-  .weather-temp{font-size:44px; font-weight:800;}
-  .weather-sub{color:var(--ink-soft); font-size:13px;}
-  .weather-icon-big{font-size:56px;}
-  .weather-stats{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:0 20px 18px;}
-  .stat-card{background:#fff; border-radius:16px; padding:12px 14px; display:flex; align-items:center; gap:10px; font-size:12.5px;}
-  .stat-card b{display:block; font-size:14px;}
-  .forecast-card{margin:0 20px 20px; background:#fff; border-radius:18px; padding:16px; }
-  .forecast-card h3{margin:0 0 10px; font-size:14px;}
-  .forecast-row{display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--line); font-size:13px;}
-  .forecast-row:last-child{border-bottom:none;}
-  .forecast-day{width:70px; color:var(--ink-soft);}
-  .forecast-icon{width:30px; text-align:center;}
-  .forecast-temp{font-weight:700; text-align:right; flex:1;}
-
-  /* ---------- Crop info ---------- */
-  #screen-crops{background:var(--cream);}
-  .chip-row{display:flex; gap:10px; padding:0 20px 18px; overflow-x:auto;}
-  .chip{
-    flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:6px;
-    background:#fff; border:1.5px solid var(--line); border-radius:16px; padding:12px 16px; font-size:12px; font-weight:600; cursor:pointer;
-    color:var(--ink-soft);
-  }
-  .chip.active{background:var(--green-light); border-color:var(--green); color:var(--green-dark);}
-  .crop-card{margin:0 20px 14px; border-radius:18px; padding:16px; background:linear-gradient(135deg,var(--wheat-light),#FCF6E8); border:1px solid #EFDFB8;}
-  .crop-card h4{margin:0 0 4px; font-size:15px;}
-  .crop-card .season{color:var(--wheat); font-weight:700; font-size:12px; margin-bottom:4px;}
-  .crop-card p{margin:0; font-size:12.5px; color:var(--ink-soft); line-height:1.5;}
-  .tip-card{margin:0 20px 20px; background:var(--green-light); border-radius:16px; padding:16px; display:flex; gap:12px; align-items:center;}
-  .tip-card span.ic{font-size:26px;}
-  .tip-card p{margin:0; font-size:13px; color:var(--green-dark); font-weight:600;}
-
-  /* ---------- Market ---------- */
-  #screen-market{background:var(--cream);}
-  .market-loc{margin:0 20px 16px; display:flex; align-items:center; justify-content:space-between; background:#fff; border:1px solid var(--line); border-radius:14px; padding:12px 16px; font-size:13px; font-weight:600;}
-  .price-row{
-    margin:0 20px 12px; background:#fff; border-radius:16px; padding:14px 16px;
-    display:flex; align-items:center; gap:14px;
-  }
-  .price-ic{width:44px;height:44px;border-radius:12px;background:var(--green-light); display:flex;align-items:center;justify-content:center; font-size:22px; flex-shrink:0;}
-  .price-info{flex:1;}
-  .price-info b{display:block; font-size:14px;}
-  .price-val{font-size:15px; font-weight:800;}
-  .price-change{font-size:11.5px; font-weight:700;}
-  .price-change.up{color:var(--green);}
-  .price-change.down{color:var(--red);}
-
-  /* ---------- Schemes ---------- */
-  #screen-schemes{background:var(--cream);}
-  .scheme-card{margin:0 20px 12px; background:#fff; border-radius:16px; padding:14px 16px; display:flex; gap:14px; align-items:flex-start; cursor:pointer;}
-  .scheme-ic{width:44px;height:44px;border-radius:12px; background:var(--green-light); display:flex;align-items:center;justify-content:center; font-size:20px; flex-shrink:0;}
-  .scheme-info b{display:block; font-size:13.5px; margin-bottom:3px;}
-  .scheme-info p{margin:0; font-size:12px; color:var(--ink-soft); line-height:1.45;}
-  .promo-card{margin:14px 20px 20px; padding:20px; border-radius:18px; background:linear-gradient(135deg,var(--green-mid),var(--green-dark)); color:#fff; display:flex; align-items:center; justify-content:space-between; gap:10px;}
-  .promo-card p{margin:0; font-weight:700; font-size:14px; max-width:170px;}
-  .promo-card span{font-size:38px;}
-
-  /* ---------- Profile ---------- */
-  #screen-profile{background:var(--cream);}
-  .profile-card{margin:0 20px 20px; background:#fff; border-radius:18px; padding:18px; display:flex; gap:14px; align-items:center;}
-  .avatar{width:60px;height:60px;border-radius:50%; background:linear-gradient(135deg,#F4A24A,#E8822F); display:flex;align-items:center;justify-content:center; font-size:26px; color:#fff; flex-shrink:0;}
-  .profile-name{font-size:16px; font-weight:800; margin:0 0 2px;}
-  .profile-meta{font-size:12.5px; color:var(--ink-soft); margin:0; display:flex; align-items:center; gap:5px;}
-  .list-item{
-    margin:0 20px 10px; background:#fff; border-radius:14px; padding:14px 16px;
-    display:flex; align-items:center; gap:12px; font-size:13.5px; font-weight:600; cursor:pointer;
-  }
-  .list-item .lic{width:30px; text-align:center; font-size:16px; color:var(--green);}
-  .list-item .arrow{margin-left:auto; color:var(--ink-soft);}
-  .list-item .val{margin-left:auto; color:var(--ink-soft); font-weight:500;}
-
-  /* ---------- Help ---------- */
-  #screen-help{background:var(--cream);}
-  .faq-item{
-    margin:0 20px 10px; background:#fff; border-radius:14px; padding:14px 16px;
-    font-size:13px; font-weight:600; cursor:pointer;
-  }
-  .faq-item .faq-q{display:flex; justify-content:space-between; align-items:center;}
-  .faq-item .faq-a{display:none; margin-top:10px; font-size:12.5px; font-weight:400; color:var(--ink-soft); line-height:1.5;}
-  .faq-item.open .faq-a{display:block;}
-  .faq-item.open .chevron{transform:rotate(90deg);}
-  .chevron{transition:transform .15s ease; color:var(--ink-soft);}
-  .contact-card{margin:16px 20px; background:var(--green-light); border-radius:16px; padding:16px; display:flex; gap:14px; align-items:center;}
-  .contact-card .cic{width:44px;height:44px;border-radius:50%; background:var(--green); color:#fff; display:flex;align-items:center;justify-content:center; font-size:20px; flex-shrink:0;}
-  .contact-card b{display:block; font-size:13.5px; margin-bottom:2px;}
-  .contact-card p{margin:0; font-size:12px; color:var(--ink-soft); line-height:1.5;}
-  .social-row{display:flex; gap:12px; padding:0 20px 24px;}
-  .social-ic{width:38px;height:38px;border-radius:50%; display:flex;align-items:center;justify-content:center; color:#fff; font-size:16px;}
-
-  .toast{
-    position:absolute; bottom:90px; left:50%; transform:translateX(-50%);
-    background:#1F2A1F; color:#fff; padding:10px 18px; border-radius:30px; font-size:12.5px;
-    opacity:0; pointer-events:none; transition:opacity .25s ease, bottom .25s ease; z-index:50; white-space:nowrap;
-  }
-  .toast.show{opacity:1; bottom:100px;}
-  .spacer{height:16px;}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -420,6 +125,21 @@
       </div>
       <div class="tile help" onclick="goto('help')">
         <div class="tile-ic">❓</div><b>Help &amp; Contact</b>
+      </div>
+    </div>
+    <div class="section-label">More Tools</div>
+    <div class="grid2">
+      <div class="tile soil" onclick="goto('soil')">
+        <div class="tile-ic">🧪</div><b>Soil Health</b>
+      </div>
+      <div class="tile disease" onclick="goto('detect')">
+        <div class="tile-ic">🔬</div><b>Disease Detection</b>
+      </div>
+      <div class="tile fertilizer" onclick="goto('fertilizer')">
+        <div class="tile-ic">🌱</div><b>Fertilizer Guide</b>
+      </div>
+      <div class="tile equipment" onclick="goto('equipment')">
+        <div class="tile-ic">🚜</div><b>Equipment Rental</b>
       </div>
     </div>
     <div class="spacer"></div>
@@ -557,269 +277,213 @@
     </div>
   </div>
 
+  <!-- 10. SOIL HEALTH -->
+  <div class="screen" id="screen-soil">
+    <div class="topbar">
+      <div class="iconbtn" onclick="goto('home')">←</div>
+      <h1>Soil Health</h1>
+      <div style="width:34px;"></div>
+    </div>
+    <div class="loc-row">📍 <span id="soil-loc">Ramesh Farm, Guntur, Andhra Pradesh</span></div>
+    <div class="loc-date" style="margin-bottom:16px;">Know your soil. Grow better.</div>
+    <div class="soil-stats">
+      <div class="soil-stat-card ph">
+        <div class="label">🧪 Soil pH Level</div>
+        <div class="big">6.8</div>
+        <div class="pill">Good (Slightly Acidic)</div>
+        <div class="range">Ideal range: 6.0 – 7.5</div>
+      </div>
+      <div class="soil-stat-card moist">
+        <div class="label">💧 Soil Moisture</div>
+        <div class="big">32%</div>
+        <div class="pill">Adequate</div>
+        <div class="range">Ideal range: 25% – 40%</div>
+      </div>
+    </div>
+    <div class="soil-meta-row">
+      <div class="soil-meta">🌱 Soil Type<div class="val">Loamy Soil</div></div>
+      <div class="soil-meta">🍃 Organic Matter<div class="val">1.8% Good</div></div>
+      <div class="soil-meta">🌿 Nutrients<div class="val">Moderate</div></div>
+    </div>
+    <div class="soil-status">
+      <div class="check">✓</div>
+      <div>
+        <b>Overall Soil Health: Good</b>
+        <p>Your soil is suitable for most crops with proper care.</p>
+      </div>
+    </div>
+    <div class="section-label">Recommended Actions</div>
+    <div class="action-item" onclick="showToast('Add Organic Manure — details')">
+      <div class="aic">🌾</div>
+      <div><b>Add Organic Manure</b><p>Use farm yard manure or compost to increase soil fertility and organic matter.</p></div>
+      <span class="arrow">›</span>
+    </div>
+    <div class="action-item" onclick="showToast('Maintain Soil Moisture — details')">
+      <div class="aic">💧</div>
+      <div><b>Maintain Soil Moisture</b><p>Use mulching and drip irrigation to retain moisture in the soil.</p></div>
+      <span class="arrow">›</span>
+    </div>
+    <div class="action-item" onclick="showToast('Regular Soil Testing — details')">
+      <div class="aic">🧫</div>
+      <div><b>Regular Soil Testing</b><p>Test soil every 6 months for better crop planning and higher yield.</p></div>
+      <span class="arrow">›</span>
+    </div>
+    <div class="action-item" onclick="showToast('Practice Crop Rotation — details')">
+      <div class="aic">🔄</div>
+      <div><b>Practice Crop Rotation</b><p>Alternate crops to maintain soil nutrients and prevent soil degradation.</p></div>
+      <span class="arrow">›</span>
+    </div>
+    <div class="tip-card" style="background:var(--wheat-light);">
+      <span class="ic">💡</span>
+      <p style="color:#8A6415;">Healthy Soil = Higher Yield = Better Income. Take care of your soil for a sustainable future.</p>
+    </div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- 11. DISEASE DETECTION -->
+  <div class="screen" id="screen-detect">
+    <div class="topbar">
+      <div class="iconbtn" onclick="goto('home')">←</div>
+      <h1>Disease Detection</h1>
+      <div style="width:34px;"></div>
+    </div>
+    <div class="loc-date" style="margin-bottom:14px;">Keep your crops healthy and get better yields</div>
+    <div class="detect-hero">
+      <div class="dic">🛡️</div>
+      <div><b>Healthy Crops, Better Tomorrow</b><p>Detect plant diseases early and take action for a healthier, more productive farm.</p></div>
+    </div>
+    <div class="detect-actions">
+      <div class="detect-action upload" onclick="showToast('Choose a photo from gallery')">
+        <div class="dic2">🖼️</div><b>Upload Photo</b><p>From your gallery</p>
+      </div>
+      <div class="detect-action camera" onclick="runDetection()">
+        <div class="dic2">📷</div><b>Take Photo</b><p>Use your camera</p>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:0 20px 12px;">
+      <div class="section-label" style="padding:0; margin:0;">Detection Result</div>
+      <span style="font-size:12px; color:var(--green); font-weight:700; cursor:pointer;" onclick="runDetection()">🔄 Scan Again</span>
+    </div>
+    <div class="result-card">
+      <div class="result-emoji">🍅</div>
+      <div class="result-info">
+        <b>Tomato Late Blight</b>
+        <i>Phytophthora infestans</i>
+        <div class="severity-pill">⚠️ High Severity</div>
+      </div>
+      <div class="confidence-ring"><span>92%</span></div>
+    </div>
+    <div class="section-label">Recommended Solution</div>
+    <div class="solution-card">
+      <div class="solution-step"><span class="step-num">1</span>Remove and destroy infected leaves (do not compost).</div>
+      <div class="solution-step"><span class="step-num">2</span>Apply recommended fungicide (Mancozeb 75% WP @ 2 g/L or a metalaxyl-based fungicide).</div>
+      <div class="solution-step"><span class="step-num">3</span>Improve air circulation and avoid excessive watering.</div>
+      <div class="solution-step"><span class="step-num">4</span>Follow crop rotation for next season.</div>
+    </div>
+    <div class="detect-cta">
+      <button class="primary" onclick="showToast('Connecting you with an agri expert…')">👨‍🌾 Consult an Expert</button>
+      <button class="outline" onclick="showToast('Calling agri helpline…')">📞 Call for Help</button>
+    </div>
+  </div>
+
+  <!-- 12. FERTILIZER RECOMMENDATION -->
+  <div class="screen" id="screen-fertilizer">
+    <div class="topbar">
+      <div class="iconbtn" onclick="goto('home')">←</div>
+      <h1>Fertilizer Recommendation</h1>
+      <div style="width:34px;"></div>
+    </div>
+    <div class="fert-header">
+      <div class="fic">🌾</div>
+      <div>
+        <b>Paddy (Rice)</b>
+        <span class="pill">Growth Stage: Tillering</span>
+      </div>
+    </div>
+    <div class="section-label">Recommended Fertilizers</div>
+    <div class="fert-table">
+      <div class="fert-row"><span class="fric">🅽</span><span class="fname">Urea (46% N)</span><span class="fqty">33 kg</span><span class="fpurpose">Promotes green leaf growth</span></div>
+      <div class="fert-row"><span class="fric">🅿</span><span class="fname">DAP (18:46:0)</span><span class="fqty">50 kg</span><span class="fpurpose">Strong root development</span></div>
+      <div class="fert-row"><span class="fric">🅺</span><span class="fname">MOP (60% K₂O)</span><span class="fqty">17 kg</span><span class="fpurpose">Better grain filling</span></div>
+    </div>
+    <div class="section-label">Application Timing</div>
+    <div class="timing-row">
+      <div class="timing-step"><div class="temoji">🌱</div><b>Basal Dose</b>At final land prep</div>
+      <div class="timing-step"><div class="temoji">🌿</div><b>Top Dress 1</b>20–25 days after transplant</div>
+      <div class="timing-step"><div class="temoji">🌾</div><b>Top Dress 2</b>40–45 days after transplant</div>
+    </div>
+    <div class="section-label">Safety Tips</div>
+    <div class="safety-grid">
+      <div class="safety-tip"><span class="sic">🌱</span>Follow the recommended dose — overuse may harm the crop.</div>
+      <div class="safety-tip"><span class="sic">🧤</span>Wear gloves while handling fertilizers.</div>
+      <div class="safety-tip"><span class="sic">💧</span>Do not apply before heavy rain or irrigation.</div>
+      <div class="safety-tip"><span class="sic">🧒</span>Keep fertilizers away from children and animals.</div>
+    </div>
+    <div class="section-label">Eco-Friendly Options</div>
+    <div class="eco-row">
+      <div class="eco-card"><div class="eic">🐄</div><b>Farmyard Manure</b><p>1–2 tons/acre — improves soil health and structure.</p></div>
+      <div class="eco-card"><div class="eic">🪱</div><b>Vermicompost</b><p>500 kg/acre — enhances fertility and microbial activity.</p></div>
+      <div class="eco-card"><div class="eic">🧫</div><b>Bio Fertilizers</b><p>Azospirillum, PSB for better nutrient availability.</p></div>
+    </div>
+    <div class="tip-card">
+      <span class="ic">💡</span>
+      <p>Soil testing is recommended before fertilizer application for better results.</p>
+    </div>
+    <div style="padding:0 20px 20px;">
+      <button class="btn-primary" onclick="goto('soil')">🧪 Soil Test Now</button>
+    </div>
+  </div>
+
+  <!-- 13. EQUIPMENT RENTAL LIST -->
+  <div class="screen" id="screen-equipment">
+    <div class="topbar">
+      <div class="iconbtn" onclick="goto('home')">←</div>
+      <h1>Equipment Rental</h1>
+      <div style="width:34px;"></div>
+    </div>
+    <div class="loc-date" style="margin-bottom:14px;">Rent tractors &amp; farm equipment nearby</div>
+    <div id="equipment-list"></div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- 14. EQUIPMENT DETAIL -->
+  <div class="screen" id="screen-equipment-detail">
+    <div class="topbar">
+      <div class="iconbtn" onclick="goto('equipment')">←</div>
+      <h1>Equipment Details</h1>
+      <div class="iconbtn" onclick="showToast('Link copied')">🔗</div>
+    </div>
+    <div class="equip-hero">
+      <div class="hero-emoji" id="detail-emoji">🚜</div>
+      <b id="detail-name">John Deere 5050 D</b>
+      <div class="sub" id="detail-sub">Tractor · Guntur, Andhra Pradesh</div>
+    </div>
+    <div class="equip-detail-stats">
+      <div class="equip-detail-stat" id="detail-power">50 HP</div>
+      <div class="equip-detail-stat" id="detail-fuel">Diesel</div>
+      <div class="equip-detail-stat" id="detail-drive">4WD</div>
+    </div>
+    <div class="section-label">Availability</div>
+    <div class="avail-row" id="avail-row"></div>
+    <div class="section-label">Owner</div>
+    <div class="owner-card">
+      <div class="owner-avatar">👨‍🌾</div>
+      <div class="owner-info"><b id="owner-name">Ramesh Reddy</b><span>Verified Owner · 4.8 ★ (86 reviews)</span></div>
+    </div>
+    <div class="equip-cta-row">
+      <button class="primary" style="background:var(--green-dark); color:#fff; border:none;" onclick="showToast('Booking request sent to owner')">📅 Book Now</button>
+      <button class="outline" style="background:#fff; border:1.5px solid var(--green); color:var(--green-dark);" onclick="showToast('Calling owner…')">📞 Call Owner</button>
+    </div>
+    <div class="tip-card">
+      <span class="ic">💡</span>
+      <p>Ensure to check the equipment condition with the owner before confirming your booking.</p>
+    </div>
+    <div class="spacer"></div>
+  </div>
+
   <div class="toast" id="toast"></div>
 </div>
 
-<script>
-const mainScreens = ['home','weather','crops','market','schemes','profile','help'];
-let history_stack = ['splash'];
-
-function goto(name){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('screen-'+name).classList.add('active');
-  document.getElementById('screen-'+name).scrollTop = 0;
-  if(history_stack[history_stack.length-1] !== name) history_stack.push(name);
-  if(mainScreens.includes(name)) renderBottomNav(name);
-}
-
-function togglePass(inputId, iconEl){
-  const inp = document.getElementById(inputId);
-  inp.type = inp.type === 'password' ? 'text' : 'password';
-  iconEl.textContent = inp.type === 'password' ? '👁️' : '🙈';
-}
-
-function doLogin(){
-  const mobile = document.getElementById('mobile-input').value.trim();
-  const mobileErr = document.getElementById('mobile-err');
-  const mobileField = document.getElementById('mobile-input');
-  if(!/^\d{10}$/.test(mobile)){
-    mobileErr.style.display='block';
-    mobileField.classList.add('field-error');
-    return;
-  }
-  mobileErr.style.display='none';
-  mobileField.classList.remove('field-error');
-  goto('home');
-  showToast('Welcome back, '+(currentUser.name || 'Nakka Janith')+'!');
-}
-
-/* ---------- Sign up ---------- */
-let currentUser = { name:'Nakka Janith', mobile:'7981439813' };
-
-function clearSignupErrors(){
-  ['signup-name','signup-mobile','signup-pass','signup-confirm'].forEach(id=>{
-    document.getElementById(id).classList.remove('field-error');
-    document.getElementById(id+'-err').style.display='none';
-  });
-}
-
-function doSignup(){
-  clearSignupErrors();
-
-  const nameEl = document.getElementById('signup-name');
-  const mobileEl = document.getElementById('signup-mobile');
-  const passEl = document.getElementById('signup-pass');
-  const confirmEl = document.getElementById('signup-confirm');
-
-  const name = nameEl.value.trim();
-  const mobile = mobileEl.value.trim();
-  const pass = passEl.value;
-  const confirm = confirmEl.value;
-
-  let hasError = false;
-
-  if(name.length < 2){
-    nameEl.classList.add('field-error');
-    document.getElementById('signup-name-err').style.display='block';
-    hasError = true;
-  }
-  if(!/^\d{10}$/.test(mobile)){
-    mobileEl.classList.add('field-error');
-    document.getElementById('signup-mobile-err').style.display='block';
-    hasError = true;
-  }
-  if(pass.length < 6){
-    passEl.classList.add('field-error');
-    document.getElementById('signup-pass-err').style.display='block';
-    hasError = true;
-  }
-  if(confirm !== pass || confirm.length === 0){
-    confirmEl.classList.add('field-error');
-    document.getElementById('signup-confirm-err').style.display='block';
-    hasError = true;
-  }
-
-  if(hasError) return;
-
-  currentUser = { name, mobile };
-  document.getElementById('profile-name').textContent = name;
-  document.getElementById('profile-phone').textContent = '📞 +91 ' + mobile.slice(0,5) + ' ' + mobile.slice(5);
-  document.getElementById('home-greeting').textContent = 'Hello, ' + name.split(' ')[0] + '! 👋';
-
-  nameEl.value=''; mobileEl.value=''; passEl.value=''; confirmEl.value='';
-
-  goto('home');
-  showToast('Account created! Welcome, '+name+'.');
-}
-
-function doLogout(){
-  goto('login');
-  document.getElementById('mobile-input').value='';
-  document.getElementById('pass-input').value='';
-  showToast('Logged out successfully');
-}
-
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(window._toastTimer);
-  window._toastTimer = setTimeout(()=>t.classList.remove('show'), 1800);
-}
-
-/* ---------- Bottom nav ---------- */
-const navItems = [
-  {key:'home', icon:'🏠', label:'Home'},
-  {key:'weather', icon:'⛅', label:'Weather'},
-  {key:'crops', icon:'🌾', label:'Crops'},
-  {key:'market', icon:'🛒', label:'Market'},
-  {key:'more', icon:'⋯', label:'More'}
-];
-function renderBottomNav(active){
-  ['screen-home','screen-weather','screen-crops','screen-market'].forEach(id=>{
-    const el = document.getElementById(id);
-    let existing = el.querySelector('.bottomnav');
-    if(existing) existing.remove();
-    const nav = document.createElement('div');
-    nav.className='bottomnav';
-    navItems.forEach(item=>{
-      const div = document.createElement('div');
-      div.className = 'navitem' + (item.key===active ? ' active':'');
-      div.innerHTML = `<span class="navic">${item.icon}</span><span>${item.label}</span>`;
-      div.onclick = ()=>{
-        if(item.key==='more'){ goto('profile'); }
-        else { goto(item.key); }
-      };
-      nav.appendChild(div);
-    });
-    el.appendChild(nav);
-  });
-}
-
-/* ---------- Crop data ---------- */
-const cropData = {
-  cereals: [
-    {name:'Rice', season:'Best Season: Kharif', desc:'Rice is a staple food crop. Ensure proper irrigation and use quality seeds.', emoji:'🌾'},
-    {name:'Wheat', season:'Best Season: Rabi', desc:'Wheat grows best in cool climate with good soil moisture.', emoji:'🌾'},
-    {name:'Maize', season:'Best Season: Kharif/Rabi', desc:'Maize needs well-drained loamy soil and moderate rainfall.', emoji:'🌽'}
-  ],
-  pulses: [
-    {name:'Toor Dal', season:'Best Season: Kharif', desc:'A hardy pulse crop that improves soil nitrogen content.', emoji:'🫘'},
-    {name:'Chickpea', season:'Best Season: Rabi', desc:'Grows well in dry conditions with minimal irrigation.', emoji:'🫘'}
-  ],
-  veg: [
-    {name:'Tomato', season:'Best Season: Year-round', desc:'Needs regular watering and staking support for best yield.', emoji:'🍅'},
-    {name:'Cotton', season:'Best Season: Kharif', desc:'Requires warm climate and well-drained black soil.', emoji:'🌱'}
-  ],
-  fruits: [
-    {name:'Mango', season:'Best Season: Summer', desc:'Thrives in tropical climate; prune after harvest for better yield.', emoji:'🥭'},
-    {name:'Banana', season:'Best Season: Year-round', desc:'Needs consistent watering and rich, well-drained soil.', emoji:'🍌'}
-  ]
-};
-const tips = {
-  cereals:'Use organic fertilizers for better soil health.',
-  pulses:'Rotate pulses with cereals to naturally enrich nitrogen levels.',
-  veg:'Mulch around vegetable beds to retain soil moisture.',
-  fruits:'Prune fruit trees regularly to improve air circulation and yield.'
-};
-function renderCrops(cat){
-  const list = document.getElementById('crop-list');
-  list.innerHTML='';
-  cropData[cat].forEach(c=>{
-    const div = document.createElement('div');
-    div.className='crop-card';
-    div.innerHTML = `<h4>${c.emoji} ${c.name}</h4><div class="season">${c.season}</div><p>${c.desc}</p>`;
-    list.appendChild(div);
-  });
-  document.getElementById('tip-text').textContent = tips[cat];
-}
-document.getElementById('crop-chips').addEventListener('click', (e)=>{
-  const chip = e.target.closest('.chip');
-  if(!chip) return;
-  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
-  chip.classList.add('active');
-  renderCrops(chip.dataset.cat);
-});
-renderCrops('cereals');
-
-/* ---------- Market data ---------- */
-const marketData = [
-  {name:'Rice (Sona Masuri)', price:'₹2,150', unit:'/ Quintal', change:'+50', up:true, emoji:'🌾'},
-  {name:'Wheat', price:'₹2,020', unit:'/ Quintal', change:'+30', up:true, emoji:'🌾'},
-  {name:'Toor Dal', price:'₹6,500', unit:'/ Quintal', change:'+120', up:true, emoji:'🫘'},
-  {name:'Maize', price:'₹1,850', unit:'/ Quintal', change:'-20', up:false, emoji:'🌽'},
-  {name:'Cotton', price:'₹5,800', unit:'/ Quintal', change:'+80', up:true, emoji:'🌱'}
-];
-function renderMarket(){
-  const list = document.getElementById('market-list');
-  list.innerHTML='';
-  marketData.forEach(m=>{
-    const div = document.createElement('div');
-    div.className='price-row';
-    div.innerHTML = `
-      <div class="price-ic">${m.emoji}</div>
-      <div class="price-info">
-        <b>${m.name}</b>
-        <span class="price-val">${m.price}</span> <span style="font-size:11.5px; color:var(--ink-soft);">${m.unit}</span>
-      </div>
-      <div class="price-change ${m.up?'up':'down'}">${m.up?'▲':'▼'} ${m.change}</div>
-    `;
-    list.appendChild(div);
-  });
-}
-renderMarket();
-
-/* ---------- Schemes data ---------- */
-const schemeData = [
-  {name:'PM Kisan Samman Nidhi', desc:'Financial assistance of ₹6,000 per year to small and marginal farmers.', emoji:'👨‍🌾'},
-  {name:'Pradhan Mantri Fasal Bima Yojana', desc:'Crop insurance scheme to protect farmers from crop loss.', emoji:'🛡️'},
-  {name:'Soil Health Card Scheme', desc:'Provides soil health cards to farmers for better crop productivity.', emoji:'🌱'},
-  {name:'Kisan Credit Card Scheme', desc:'Easy credit facilities for farmers at low interest rates.', emoji:'💳'}
-];
-function renderSchemes(){
-  const list = document.getElementById('scheme-list');
-  list.innerHTML='';
-  schemeData.forEach(s=>{
-    const div = document.createElement('div');
-    div.className='scheme-card';
-    div.onclick=()=>showToast(s.name+' — details coming soon');
-    div.innerHTML = `<div class="scheme-ic">${s.emoji}</div><div class="scheme-info"><b>${s.name}</b><p>${s.desc}</p></div>`;
-    list.appendChild(div);
-  });
-}
-renderSchemes();
-
-/* ---------- FAQ data ---------- */
-const faqData = [
-  {q:'How to check crop information?', a:'Go to Home and tap "Crop Information", then choose a category to see crop details and farming tips.'},
-  {q:'How to get weather updates?', a:'Tap "Weather" from the Home screen or bottom navigation to see current conditions and a 5-day forecast.'},
-  {q:'How to see market prices?', a:'Open "Market Prices" from Home to view current rates for major crops in your local market.'},
-  {q:'How to apply for schemes?', a:'Visit "Government Schemes" from Home, tap a scheme to view details, and follow the application link.'}
-];
-function renderFaqs(){
-  const list = document.getElementById('faq-list');
-  list.innerHTML='';
-  faqData.forEach((f,i)=>{
-    const div = document.createElement('div');
-    div.className='faq-item';
-    div.innerHTML = `<div class="faq-q">${f.q}<span class="chevron">›</span></div><div class="faq-a">${f.a}</div>`;
-    div.onclick=()=>div.classList.toggle('open');
-    list.appendChild(div);
-  });
-}
-renderFaqs();
-
-/* ---------- Clock ---------- */
-function updateClock(){
-  const now = new Date();
-  let h = now.getHours(); const m = now.getMinutes();
-  const ampm = h>=12?'PM':'AM'; h = h%12; if(h===0) h=12;
-  document.getElementById('clock').textContent = h+':'+String(m).padStart(2,'0');
-}
-updateClock(); setInterval(updateClock, 30000);
-
-/* Auto-advance splash after a moment, still tappable */
-setTimeout(()=>{ if(history_stack[history_stack.length-1]==='splash') goto('login'); }, 3200);
-</script>
+<script src="script.js"></script>
 </body>
 </html>
